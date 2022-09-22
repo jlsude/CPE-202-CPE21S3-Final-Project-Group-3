@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config({path: "./.env"});
 
 
 const app = express();
@@ -11,6 +12,8 @@ const ackappointmentRoutes = require('./routes/api/acknowledged_appointment_tabl
 const photographerRoutes = require('./routes/api/photographer_table.js');
 const photosessionscheduleRoutes = require('./routes/api/photosession_schedule_table.js');
 
+const authRoutes = require('./routes/api/authorization.js');
+
 // init Middleware
 app.use(express.json({ extended: false }));
 
@@ -21,7 +24,7 @@ app.use('/paid_appointment_table', paidappointmentRoutes);
 app.use('/acked_appointment_table', ackappointmentRoutes);
 app.use('/photographer_table', photographerRoutes);
 app.use('/photosession_schedule_table', photosessionscheduleRoutes);
-
+app.use('/authorization', authRoutes);
 
 app.get('/', (req, res) => res.send('ALAS API Running'));
 

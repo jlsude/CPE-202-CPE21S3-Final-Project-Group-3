@@ -3,20 +3,28 @@ var express = require('express');
 
 var router = express.Router();
 
+const jwt = require('jsonwebtoken');
+
 var dbConn = require('../../config/db.js');
 
 //---------------------- Client Access -------------------------------------
+// Client View Schedules
+// @routes GET /c/view_schedules
+// @desc Client get to view their schedules
+// @access PUBLIC / Client level access
+router.get('/c/view_schedules', (req, res) => {
 
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
-// SEARCH
-// @routes GET photosession_schedule_table/c/search/:clientid
-// @desc View Data
-// @access PUBLIC / Client Access
-router.get('/c/search/:clientid', (req, res) => {
+    console.log(decodedToken.data['client_id']);
+    console.log(decodedToken.data['client_email']);
 
-    var clientid = req.params.clientid;
-
-    sqlQuery = `SELECT photographer_table.photographer_name, photographer_table.photographer_contact_number, 
+    sqlQuery = `SELECT photographer_table.photographer_name, 
+    photographer_table.photographer_contact_number, 
     appointment_table.appointment_date,
     appointment_table.appointment_service,
     appointment_table.appointment_venue
@@ -27,7 +35,7 @@ router.get('/c/search/:clientid', (req, res) => {
     ON photosession_schedule_table.appointment_id = appointment_table.appointment_id
     INNER JOIN photographer_table
     ON photosession_schedule_table.photographer_id = photographer_table.photographer_id
-    WHERE appointment_table.client_id = "${clientid}";`
+    WHERE appointment_table.client_id = "${decodedToken.data['client_id']}";`
 
     dbConn.query(sqlQuery, function (error, results, fields) {
     if (error) throw error;
@@ -37,13 +45,21 @@ router.get('/c/search/:clientid', (req, res) => {
 
 //---------------------- Photographer Access -------------------------------------
 
-// SEARCH
-// @routes GET photosession_schedule_table/p/search/:photographerid
-// @desc View Data
-// @access PUBLIC / Photographer Access
-router.get('/p/search/:photographerid', (req, res) => {
+// Photographer View Schedules
+// @routes GET /p/view_schedules
+// @desc Photographer get to view their schedules
+// @access PUBLIC / Photographer level access
+router.get('/p/view_schedules', (req, res) => {
 
-    var photographerid = req.params.photographerid;
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+
+    console.log(decodedToken.data['photographer_id']);
+    console.log(decodedToken.data['photographer_email']);
+
 
     sqlQuery = `SELECT 
     client_table.client_name,
@@ -59,7 +75,7 @@ router.get('/p/search/:photographerid', (req, res) => {
     ON photosession_schedule_table.appointment_id = appointment_table.appointment_id
     INNER JOIN client_table
     ON appointment_table.client_id = client_table.client_id
-    WHERE photosession_schedule_table.photographer_id = "${photographerid}";`
+    WHERE photosession_schedule_table.photographer_id = "${decodedToken.data['photographer_id']}";`
 
     dbConn.query(sqlQuery, function (error, results, fields) {
     if (error) throw error;
@@ -68,80 +84,169 @@ router.get('/p/search/:photographerid', (req, res) => {
 });
 
 //---------------------- Manager Access -------------------------------------
-// VIEW
-// @routes GET photosession_schedule_table/view
-// @desc View Data
-// @access PRIVATE / Manager Access
-router.get('/m/view', (req, res) => {
+// Manager View All Schedules
+// @routes GET /m/view_all_schedules
+// @desc Manager get to view all schedules
+// @access PRIVATE / Manager level access
+router.get('/m/view_all_schedules', (req, res) => {
 
-    sqlQuery = `SELECT * FROM photosession_schedule_table`;
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
-    dbConn.query(sqlQuery, function (error, results, fields) {
-    if (error) throw error;
-    res.status(200).json(results);
-    });
-});
+    if (decodedToken.data['client_id'] == 10000){
+        console.log(decodedToken.data['client_email']);
+        console.log(decodedToken.data['client_id']);
+        console.log("access granted");
 
-// INSERT
-// @routes POST photosession_schedule_table/m/add
-// @desc INSERT data
-// @access PRIVATE / Manager Access
-router.post('/m/add',(req,res) =>{
-    // get the input from the user trough request (req)
-    console.log(req.body);
+        var Note = "You are accessing this data as manager.";
 
-    var photographerid = req.body.photographerid;
-    var appointmentid = req.body.appointmentid;
-    var ackappid = req.body.ackappid;
+        sqlQuery = `SELECT 
+        photosession_schedule_table.ps_id,
+        client_table.client_name,
+        client_table.client_contact_number,
+        client_table.client_address,
+        appointment_table.appointment_date,
+        appointment_table.appointment_service,
+        appointment_table.appointment_venue,
+        photographer_table.photographer_name, 
+        photographer_table.photographer_contact_number
+    
+    
+        FROM photosession_schedule_table
+        INNER JOIN appointment_table
+        ON photosession_schedule_table.appointment_id = appointment_table.appointment_id
+        INNER JOIN client_table
+        ON appointment_table.client_id = client_table.client_id
+        INNER JOIN photographer_table
+        ON photosession_schedule_table.photographer_id = photographer_table.photographer_id`;
 
-    // connect to mysql database and perform INSERT Query
-    sqlQuery = `INSERT INTO photosession_schedule_table(photographer_id, appointment_id, ackapp_id) VALUES ("${photographerid}", "${appointmentid}", "${ackappid}")`
-
-    dbConn.query(sqlQuery, function( error, results, fields ){
+        dbConn.query(sqlQuery, function (error, results, fields) {
         if (error) throw error;
-        res.status(200).json(results);
-    });
+        res.status(200).json({Note, results});
+        });
+    }
+
+    else {
+        var Note = "You do not have the required level of authorization to access this.";
+        res.status(200).json(Note);
+    }
+});
+
+// Manager Post Schedule
+// @routes POST /m/add_photosession_schedule_data
+// @desc Manager get to post schedule
+// @access PRIVATE / Manager level access
+router.post('/m/add_photosession_schedule_data',(req,res) =>{
+
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+
+    var photographerid = req.body.photographerid;
+    var appointmentid = req.body.appointmentid;
+    var ackappid = req.body.ackappid;
+   
+    if (decodedToken.data['client_id'] == 10000){
+        console.log(decodedToken.data['client_email']);
+        console.log(decodedToken.data['client_id']);
+        console.log("access granted");
+
+        sqlQuery = `INSERT INTO photosession_schedule_table(photographer_id, appointment_id, ackapp_id) 
+        VALUES ("${photographerid}", "${appointmentid}", "${ackappid}")`
+        dbConn.query(sqlQuery, function (error, results, fields) {
+        if (error) throw error;
+        res.status(200).json({results});
+        });
+    }
+
+    else {
+        var Note = "You do not have the required level of authorization to access this.";
+        res.status(200).json(Note);
+    }
 
 });
 
-// UPDATE
-// @routes UPDATE photosession_schedule_table/m/update/:psid
-// @desc UPDATE
-// access PRIVATE / Manager access
-router.put('/m/update/:psid', (req, res) => {
+// Manager Update Schedule
+// @routes UPDATE /m/update_schedule/:psid
+// @desc Manager get update schedule
+// access PRIVATE / Manager level access
+router.put('/m/update_schedule/:psid', (req, res) => {
 
-    console.log(req.body);
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+
     var psid = req.params.psid;
     var photographerid = req.body.photographerid;
     var appointmentid = req.body.appointmentid;
     var ackappid = req.body.ackappid;
+   
+    if (decodedToken.data['client_id'] == 10000){
+        console.log(decodedToken.data['client_email']);
+        console.log(decodedToken.data['client_id']);
+        console.log("access granted");
 
-    sqlQuery1 = `UPDATE photosession_schedule_table SET photographer_id = "${photographerid}", appointment_id = "${appointmentid}", ackapp_id = "${ackappid}" WHERE ps_id = "${psid}"`;
+        sqlQuery = `UPDATE photosession_schedule_table SET photographer_id = "${photographerid}", 
+        appointment_id = "${appointmentid}", ackapp_id = "${ackappid}" WHERE ps_id = "${psid}"`;
 
-    dbConn.query(sqlQuery1, function (error, results, fields) {
-    if (error) throw error;
-    res.status(200).json(results);
-    });
+        dbConn.query(sqlQuery, function (error, results, fields) {
+        if (error) throw error;
+        res.status(200).json({results});
+        });
+    }
+
+    else {
+        var Note = "You do not have the required level of authorization to access this.";
+        res.status(200).json(Note);
+    }
+
 
 });
 
-// DELETE
-// @routes DELETE photosession_schedule_table/m/delete/:photographerid
-// @desc DELETE Data
-// @access PRIVATE / Manager Access
-router.delete('/m/delete/:psid', (req, res) => {
+// Manager Delete Schedule
+// @routes DELETE /m/delete_schedule/:psid
+// @desc Manager get to delete schedule
+// @access PRIVATE / Manager level access
+router.delete('/m/delete_schedule/:psid', (req, res) => {
 
     var psid = req.params.psid;
 
-    sqlQuery = `DELETE FROM photosession_schedule_table WHERE ps_id = ${psid}`;
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token){
+        res.status(200).json({success: false, msg: 'Error, Token was not found'});
+    }
 
-    dbConn.query(sqlQuery, function (error, results, fields) {
-    if (error) throw error;
-    res.status(200).json({
-      msg: 'Data Successfully Deleted',
-      results: results,
-    });
-    });
+    const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
+
+    var ackappid = req.params.ackappid;
+   
+    if (decodedToken.data['client_id'] == 10000){
+        console.log(decodedToken.data['client_email']);
+        console.log(decodedToken.data['client_id']);
+        console.log("access granted");
+
+        sqlQuery = `DELETE FROM photosession_schedule_table WHERE ps_id = ${psid}`;
+
+        dbConn.query(sqlQuery, function (error, results, fields) {
+            if (error) throw error;
+            res.status(200).json({
+              msg: 'Data Successfully Deleted',
+              results: results,
+            });
+            });
+    }
+
+    else {
+        var Note = "You do not have the required level of authorization to access this.";
+        res.status(200).json(Note);
+    }
   
 });
 
