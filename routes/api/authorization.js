@@ -8,8 +8,8 @@ var dbConn = require('../../config/db.js');
 
 
 //Manager Login
-//@ routes POST /m/login
-router.post('/login', (req, res, next) => {
+//@ routes POST /manager_login
+router.post('/manager_login', (req, res, next) => {
 
     var clientemail = req.body.manageremail;
     var clientpassword = req.body.managerpassword;
