@@ -123,7 +123,6 @@ router.get('/m/view_all_appointments', (req, res) => {
 
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -160,7 +159,6 @@ router.put('/m/eval_appointments/:appointmentid', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -196,7 +194,6 @@ router.delete('/m/delete_appointments/:appointmentid', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 

@@ -24,7 +24,6 @@ router.post('/m/add_acked_appointment_table',(req,res) =>{
     var paymentid = req.body.paymentid;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -55,7 +54,6 @@ router.get('/m/view_all_acknowledged_appointments', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -96,7 +94,6 @@ router.put('/m/update_acknowledged_appointment/:ackappid', (req, res) => {
 
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -133,7 +130,6 @@ router.delete('/m/delete_acknowledged_appointments/:ackappid', (req, res) => {
     var ackappid = req.params.ackappid;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 

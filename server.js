@@ -14,7 +14,7 @@ const photosessionscheduleRoutes = require('./routes/api/photosession_schedule_t
 
 const authRoutes = require('./routes/api/authorization.js');
 
-// init Middleware
+// Init Middleware
 app.use(express.json({ extended: false }));
 
 

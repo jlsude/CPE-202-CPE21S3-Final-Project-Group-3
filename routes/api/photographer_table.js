@@ -100,7 +100,6 @@ router.get('/m/view_all_photographer_information', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -137,7 +136,6 @@ router.post('/m/photographer_creation', (req, res, next) => {
     var photographercontactnumber = req.body.cphotographercontactnumber;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -186,7 +184,6 @@ router.put('/m/update_photographer_information/:photographerid', (req, res) => {
     var photographercontactnumber = req.body.photographercontactnumber;
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -223,7 +220,6 @@ router.delete('/m/delete_photographer_data/:photographerid', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 

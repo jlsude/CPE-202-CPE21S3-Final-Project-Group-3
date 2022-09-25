@@ -34,7 +34,7 @@ router.post('/manager_login', (req, res, next) => {
                     
                 }
 
-                //Create Token
+                //Token Creation
 
                 token = jwt.sign(
                     {data: data},

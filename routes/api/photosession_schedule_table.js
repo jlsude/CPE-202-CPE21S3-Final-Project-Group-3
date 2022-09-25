@@ -97,7 +97,6 @@ router.get('/m/view_all_schedules', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -152,7 +151,6 @@ router.post('/m/add_photosession_schedule_data',(req,res) =>{
     var ackappid = req.body.ackappid;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -189,7 +187,6 @@ router.put('/m/update_schedule/:psid', (req, res) => {
     var ackappid = req.body.ackappid;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -228,7 +225,6 @@ router.delete('/m/delete_schedule/:psid', (req, res) => {
     var ackappid = req.params.ackappid;
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 

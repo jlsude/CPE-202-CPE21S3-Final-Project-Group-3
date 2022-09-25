@@ -1,3 +1,5 @@
 node_modules/
-config/db.js
 .env
+##normally, we will put this as part of .gitignore 
+##but not this time for the sake of transparency of our project
+#config/db.js

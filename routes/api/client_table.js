@@ -154,7 +154,6 @@ router.get('/m/view_all_client_information', (req, res) => {
     const decodedToken = jwt.verify(token,process.env.SECRET_TOKEN);
 
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -191,7 +190,6 @@ router.get('/m/search_client_name/:clientname', (req, res) => {
 
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
@@ -227,7 +225,6 @@ router.delete('/m/delete_client_data/:clientid', (req, res) => {
 
    
     if (decodedToken.data['client_id'] == 10000){
-        console.log(decodedToken.data['client_email']);
         console.log(decodedToken.data['client_id']);
         console.log("access granted");
 
