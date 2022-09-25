@@ -70,7 +70,8 @@ router.put('/c/client_update_appointment/:appointmentid', (req, res) => {
     var appointmentid = req.params.appointmentid;
 
     sqlQuery = `UPDATE appointment_table SET appointment_date = "${appointmentdate}", 
-    appointment_service = "${appointmentservice}", appointment_number_products = "${appointmentnumberproducts}", appointment_venue = "${appointmentvenue}", 
+    appointment_service = "${appointmentservice}", appointment_number_products = "${appointmentnumberproducts}", 
+    appointment_venue = "${appointmentvenue}", 
     appointment_status = "PENDING" WHERE appointment_id=${appointmentid}`;
     
     dbConn.query(sqlQuery, function (error, results, fields) {

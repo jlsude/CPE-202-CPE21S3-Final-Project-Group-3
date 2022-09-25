@@ -18,8 +18,10 @@ router.post('/signup', (req, res, next) => {
     var clientaddress = req.body.clientaddress;
 
     try {
-        sqlQuery = `INSERT INTO client_table(client_email, client_password, client_name, client_contact_number, client_address) 
-        VALUES ("${clientemail}", "${clientpassword}", "${clientname}", "${clientcontactnumber}", "${clientaddress}")`
+        sqlQuery = `INSERT INTO client_table(client_email, client_password, client_name, 
+            client_contact_number, client_address) 
+        VALUES ("${clientemail}", "${clientpassword}", "${clientname}", "${clientcontactnumber}", 
+        "${clientaddress}")`
         dbConn.query (sqlQuery, function(error, results){
             console.log(results.insertId);
             userId = results.insertId
